@@ -1,0 +1,8 @@
+# Entorno virtual: no se sube, se recrea con "pip install -r requirements.txt"
+venv/
+
+# Archivos compilados de Python (se generan solos)
+__pycache__/
+*.pyc
+
+# OJO: la carpeta media/ NO se ignora (la entrega pide las fotos y logos subidos)

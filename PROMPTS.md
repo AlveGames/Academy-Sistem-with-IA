@@ -41,3 +41,29 @@ las restricciones únicas, `Periodo.clean()`, `Matricula.clean()` (carrera y cup
   `TIME_ZONE = 'Guayaquil'`. El nombre correcto es `'America/Guayaquil'`. (`check` no lo detecta en Windows.)
 - Al imprimir "→" en la consola de Windows salió `UnicodeEncodeError`; se resolvió con `PYTHONIOENCODING=utf-8`
   (solo afecta la prueba, no el proyecto).
+
+## 3. Prompt 2 · Admin y datos de prueba (2026-11-25)
+
+**Prompt (resumen):** en `academico/admin.py`, una clase BaseAdmin (auditoría en solo lectura y
+`obj.user = request.user` en `save_model()`) y los 11 modelos registrados con list_display,
+search_fields y list_filter, más la Nota como inline de la Matrícula. Además, el comando
+`poblar_datos` con datos de prueba que no se dupliquen (get_or_create).
+
+**Qué se hizo:**
+- `academico/admin.py`: BaseAdmin con `readonly_fields` y `save_model()`. También tiene `save_formset()`,
+  para que la Nota guardada desde el inline lleve el usuario. Los 11 admin heredan de BaseAdmin
+  (Seccion se filtra por periodo, jornada y carrera). NotaInline es un StackedInline con max_num=1
+  y muestra promedio/estado en solo lectura.
+- `academico/management/__init__.py`, `commands/__init__.py` y `commands/poblar_datos.py`:
+  2 universidades, 3 facultades, 3 carreras, 2 semestres, 1 periodo activo, 6 cursos, 3 profesores,
+  4 secciones (2 diurnas y 2 nocturnas), 15 estudiantes, 25 matrículas y 25 notas (15 aprobadas, 10 reprobadas).
+  Cada estudiante solo se matricula en cursos de su carrera, para cumplir `Matricula.clean()`.
+- Pruebas: el comando se ejecutó dos veces y no duplicó nada; las 25 matrículas pasan `full_clean()`;
+  todas las páginas del admin responden 200; cambiar n2 a 40 en el inline pasa la nota a Reprobado;
+  matricular a un estudiante de Redes en SOF-102 muestra el error de `clean()`.
+
+**Errores y cómo se corrigieron:**
+- La zona horaria seguía como `TIME_ZONE = 'Guayaquil'` en settings.py (ya estaba en el commit anterior).
+  Se corrigió a `'America/Guayaquil'`, porque con ese valor el comando y el admin se caían.
+- En la prueba automática del admin salió `DisallowedHost: 'testserver'`: el cliente de pruebas usa ese host.
+  Se probó con `Client(HTTP_HOST='localhost')`. No se cambió ALLOWED_HOSTS.

@@ -107,7 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'es-ec'
 
-TIME_ZONE = 'Guayaquil'
+TIME_ZONE = 'America/Guayaquil'   # nombre oficial de la zona horaria (formato Continente/Ciudad)
 
 USE_I18N = True
 
